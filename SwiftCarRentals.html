@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SwiftCar — Rental Booking</title>
+  <style>
+    :root{
+      --accent:#ff6b6b;
+      --accent-dark:#e04f4f;
+      --muted:#6b7280;
+      --card:#ffffffcc;
+      --glass: rgba(255,255,255,0.08);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#0f172a 0%, #071025 60%);color:#eef2ff;min-height:100vh}
+
+    /* page layout */
+    .container{max-width:1100px;margin:40px auto;padding:24px}
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start}
+
+    /* hero left */
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.4)}
+    .logo svg{filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));}
+    h1{margin:8px 0 0;font-size:24px}
+    p.lead{margin:8px 0 0;color:var(--muted)}
+
+    /* card */
+    .card{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:16px;backdrop-filter: blur(6px);box-shadow:0 10px 30px rgba(2,6,23,0.6);}
+
+    /* form */
+    form{display:grid;gap:12px}
+    .row{display:flex;gap:12px}
+    .row .col{flex:1}
+    label{font-size:13px;color:#dbeafe;display:block;margin-bottom:6px}
+    input[type=text], input[type=email], input[type=date], select{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+    .small{font-size:13px;color:var(--muted)}
+
+    .submit{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:6px}
+    button{background:linear-gradient(90deg,var(--accent),var(--accent-dark));border:0;padding:12px 18px;border-radius:12px;color:white;font-weight:600;cursor:pointer;box-shadow:0 8px 20px rgba(255,107,107,0.14)}
+
+    /* right column: preview & companies */
+    .preview{background-image:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)), url('https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1400&q=60');background-size:cover;background-position:center;border-radius:12px;padding:14px;min-height:420px;position:relative}
+    .preview-overlay{position:absolute;inset:14px;border-radius:10px;padding:14px;background:linear-gradient(180deg, rgba(2,6,23,0.5), rgba(2,6,23,0.65));display:flex;flex-direction:column;justify-content:flex-end}
+    .car-title{font-size:20px;margin:0}
+    .specs{display:flex;gap:12px;margin-top:8px}
+    .chip{background:var(--glass);padding:8px 10px;border-radius:999px;font-size:13px}
+
+    .companies{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .company{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,0.03)}
+    .company svg{width:28px;height:20px}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* responsive */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr;}
+      .preview{min-height:260px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="card">
+        <div class="brand">
+          <div class="logo" aria-hidden>
+            <!-- small steering wheel icon -->
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" stroke="white" stroke-opacity="0.9" stroke-width="1.2" />
+              <path d="M12 6v5l3 3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1>SwiftCar Rentals</h1>
+            <p class="lead">Fast, reliable car rental — choose your brand, pick-up time, extras and go.</p>
+          </div>
+        </div>
+
+        <hr style="border:none;border-top:1px solid rgba(255,255,255,0.03);margin:16px 0">
+
+        <form id="rentalForm" class="rental-form card">
+          <div class="row">
+            <div class="col">
+              <label for="fullName">Full name</label>
+              <input id="fullName" name="fullName" type="text" placeholder="Your full name" required />
+            </div>
+            <div class="col">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="you@example.com" required />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label for="pickup">Pick-up location</label>
+              <input id="pickup" name="pickup" type="text" placeholder="City, airport or address" />
+            </div>
+            <div class="col">
+              <label for="dropoff">Drop-off location</label>
+              <input id="dropoff" name="dropoff" type="text" placeholder="City, airport or address" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label for="startDate">Start date</label>
+              <input id="startDate" name="startDate" type="date" required />
+            </div>
+            <div class="col">
+              <label for="endDate">End date</label>
+              <input id="endDate" name="endDate" type="date" required />
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label for="company">Preferred company</label>
+              <select id="company" name="company">
+                <option value="nissan" selected>Nissan — many more</option>
+                <option value="toyota">Toyota</option>
+                <option value="honda">Honda</option>
+                <option value="bmw">BMW</option>
+                <option value="mercedes">Mercedes</option>
+                <option value="audi">Audi</option>
+                <option value="ford">Ford</option>
+                <option value="chevrolet">Chevrolet</option>
+                <option value="kia">Kia</option>
+                <option value="hyundai">Hyundai</option>
+              </select>
+            </div>
+            <div class="col">
+              <label for="model">Car model (optional)</label>
+              <input id="model" name="model" type="text" placeholder="Ex: Qashqai, Camry, Civic" />
+            </div>
+          </div>
+
+          <div>
+            <label>Extras</label>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <label class="chip"><input type="checkbox" name="gps" /> GPS</label>
+              <label class="chip"><input type="checkbox" name="childSeat" /> Child seat</label>
+              <label class="chip"><input type="checkbox" name="insurance" /> Full insurance</label>
+              <label class="chip"><input type="checkbox" name="additionalDriver" /> Additional driver</label>
+            </div>
+          </div>
+
+          <div class="row" style="align-items:center">
+            <div class="col">
+              <label for="promo">Promo code</label>
+              <input id="promo" name="promo" type="text" placeholder="Enter code if you have one" />
+            </div>
+            <div style="width:160px;display:flex;align-items:flex-end">
+              <button type="button" onclick="applyPromo()">Apply</button>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px">
+            <input id="terms" type="checkbox" required />
+            <label for="terms" class="small">I agree to SwiftCar's <a href="#" style="color:var(--accent);text-decoration:underline">terms &amp; conditions</a>.</label>
+          </div>
+
+          <div class="submit">
+            <div class="small">Estimated price: <strong id="estimate">—</strong></div>
+            <div style="display:flex;gap:8px">
+              <button type="button" onclick="estimatePrice()">Estimate</button>
+              <button type="submit">Reserve car</button>
+            </div>
+          </div>
+        </form>
+
+        <footer>Need something custom? Contact <strong>support@swiftcar.example</strong></footer>
+      </div>
+
+      <div>
+        <div class="preview card">
+          <div class="preview-overlay">
+            <div>
+              <h3 class="car-title">Modern SUV — Nissan Qashqai</h3>
+              <div class="specs">
+                <div class="chip">5 seats</div>
+                <div class="chip">Auto</div>
+                <div class="chip">Petrol</div>
+              </div>
+            </div>
+
+            <div style="margin-top:18px">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="small">Top brands available</div>
+                <div class="small">Free cancellation • 24/7 support</div>
+              </div>
+
+              <div class="companies">
+                <!-- Nissan (inline simplified logo) -->
+                <div class="company" title="Nissan">
+                  <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><circle cx="256" cy="256" r="200" fill="white" opacity="0.06"/><path d="M128 256h256" stroke="white" stroke-width="18" stroke-linecap="round"/></svg>
+                  <div>Nissan</div>
+                </div>
+
+                <!-- Toyota -->
+                <div class="company" title="Toyota">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><ellipse cx="12" cy="12" rx="10" ry="6" fill="white" opacity="0.06"/><path d="M3 12c0 3 4 6 9 6s9-3 9-6-4-6-9-6S3 9 3 12z" stroke="white" stroke-width="0.8" fill="none"/></svg>
+                  <div>Toyota</div>
+                </div>
+
+                <!-- Honda -->
+                <div class="company" title="Honda">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="12" rx="3" fill="white" opacity="0.04"/><path d="M7 8h10v8H7z" stroke="white" stroke-width="0.6" fill="none"/></svg>
+                  <div>Honda</div>
+                </div>
+
+                <!-- BMW -->
+                <div class="company" title="BMW">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="white" opacity="0.04"/><path d="M12 6v12M6 12h12" stroke="white" stroke-width="0.6" stroke-linecap="round"/></svg>
+                  <div>BMW</div>
+                </div>
+
+                <!-- Mercedes -->
+                <div class="company" title="Mercedes">
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="white" opacity="0.04"/><path d="M12 3v9l6 6" stroke="white" stroke-width="0.6" stroke-linecap="round"/></svg>
+                  <div>Mercedes</div>
+                </div>
+
+                <!-- Audi -->
+                <div class="company" title="Audi">
+                  <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="40" rx="6" fill="white" opacity="0.03"/></svg>
+                  <div>Audi</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="card" style="padding:12px">
+          <h3 style="margin:0 0 8px 0">Quick filters</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button style="padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:inherit">SUV</button>
+            <button style="padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:inherit">Economy</button>
+            <button style="padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:inherit">Luxury</button>
+            <button style="padding:8px 10px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:inherit">Electric</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // small client-side logic for demo purposes
+    const form = document.getElementById('rentalForm');
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name = document.getElementById('fullName').value.trim();
+      if(!name){alert('Please enter your name');return}
+      alert('Thanks '+name+'! Your reservation request has been received. (Demo)');
+      form.reset();
+      document.getElementById('estimate').innerText='—';
+    });
+
+    function estimatePrice(){
+      const s = document.getElementById('startDate').value;
+      const e = document.getElementById('endDate').value;
+      if(!s || !e){alert('Please choose start and end dates to estimate price.');return}
+      const sd = new Date(s);
+      const ed = new Date(e);
+      const days = Math.max(1, Math.ceil((ed - sd) / (1000*60*60*24)));
+      const base = {nissan:40, toyota:38, honda:35, bmw:80, mercedes:90, audi:85, ford:36, chevrolet:34, kia:30, hyundai:32};
+      const company = document.getElementById('company').value || 'nissan';
+      const per = base[company] || 40;
+      let total = per * days;
+      if(document.querySelector('input[name="insurance"]').checked) total += 12*days;
+      if(document.querySelector('input[name="gps"]').checked) total += 4*days;
+      if(document.querySelector('input[name="childSeat"]').checked) total += 3*days;
+      document.getElementById('estimate').innerText = '$' + total.toFixed(2) + ' ('+days+' day'+(days>1?'s':'')+')';
+    }
+
+    function applyPromo(){
+      const code = document.getElementById('promo').value.trim().toUpperCase();
+      if(!code){alert('Enter a promo code to apply. Try: SAVE10');return}
+      if(code==='SAVE10'){
+        alert('Promo accepted — 10% off at checkout (demo).');
+      } else {
+        alert('Promo code not recognized.');
+      }
+    }
+  </script>
+</body>
+</html>
